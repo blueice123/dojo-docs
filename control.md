@@ -17,6 +17,9 @@
 
 ## bosh VM 배포하기(bbl up: Bosh Bootloader)
 bbl cli를 이용해서 control plane의 bosh VM을 자동으로 생성할 것입니다. 추가로 생성되는 bbl-jumpbox vm은 bosh vm으로 접근하는 proxy VM이므로 삭제하면 안됩니다.
+
+
+
  - https://github.com/cloudfoundry/bosh-bootloader
 ### bbl-user IAM 생성
 ```
@@ -41,8 +44,21 @@ bbl cli를 이용해서 control plane의 bosh VM을 자동으로 생성할 것�
     ]
 }
 ```
+
+### concourse elb에 targetgroup 추가
+```
+mkdir -p ~/workspace/bbl-1/terraform
+
+cd ~/workspace/bbl-1/terraform
+wget https://raw.githubusercontent.com/pivotalservices/concourse-credhub/master/bbl-terraform/aws/concourse-lb_override.tf
+
+```
+
+
 ### bbl up
 ```
+cd ~/workspace/bbl-1
+
 bbl up --debug \
         --aws-access-key-id <bbl-user access-key-id> \
         --aws-secret-access-key <bbl-user secret-access-key> \
