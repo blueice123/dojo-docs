@@ -238,7 +238,7 @@ Setting the target url: https://bbl-env-ur-xxxxx-concourse-lb-xxxxxx.elb.ap-nort
 Login Successful
 
 
-ubuntu@:~/workspace/concourse/concourse-credhub$ credhub set -t value -n /concourse/main/hello -v test
+ubuntu@:~/workspace/concourse/concourse-credhub$ credhub set -t value -n /concourse/main/hello -v credhub
 id: 637fedec-b6f3-4ff4-aa8b-e15cce9f3353
 name: /concourse/main/hello
 type: value
@@ -249,7 +249,7 @@ ubuntu@:~/workspace/concourse/concourse-credhub$ credhub get -n /concourse/main/
 id: 637fedec-b6f3-4ff4-aa8b-e15cce9f3353
 name: /concourse/main/hello
 type: value
-value: test
+value: credhub
 version_created_at: "2018-11-13T07:40:29Z"
 ```
 ## Credhub 연동 테스트 
@@ -287,8 +287,8 @@ Successfully pulled ubuntu@sha256:29934af957c53004d7fb6340139880d23fb1952505a15d
 
 running sh -exc echo "Hello $WORLD_PARAM"
 
-+ echo Hello test
-Hello test
++ echo Hello credhub
+Hello credhub
 succeeded
 ```
 
