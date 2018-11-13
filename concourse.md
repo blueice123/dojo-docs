@@ -202,3 +202,6 @@ the pipeline is currently paused. to unpause, either:
 Access
 https://dojo-mz-concourse-
 ```
+## 샘플 파이프라인 배포 확인
+https://dojo-mz-concourse-lb-xxxxxxxx.elb.ap-northeast-1.amazonaws.com 접속 후 
+vars.yml에서 설정한 username 및 password로 로그인 후 확인
