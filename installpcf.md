@@ -30,6 +30,28 @@ bbl-user와 동일한 권한 + RDS 전체 권한을 부여
 등록후 DNS인증방법을 선택
 #### 방법2: 직접 위 \<pcfdomain\>에 대한 인증서를 생성하여 AWS Certificate manager에 import한다.
 
+### aws_key_name
+AWS EC2 키페어 생성 후 키페어명 입력
+
+### PCF 구성요소 접속 계정 생성
+```
+ ubuntu@  credhub generate -t user -n /concourse/main/install_pcf/db_master_user  --username=master_db_user -l 15
+id: ac2045d5-b68a-4edb-a12a-597ad7057c57
+name: /concourse/main/install_pcf/db_master_user2
+type: user
+value: <redacted>
+version_created_at: "2018-11-13T08:54:07Z"
+
+ubuntu@ credhub get -n /concourse/main/install_pcf/db_master_user
+id: 78c56457-a654-439c-90bc-a3c1b2d1bcf7
+name: /concourse/main/install_pcf/db_master_user
+type: user
+value:
+  password: 3fv87mtK1NaZxx
+  password_hash: $6$MI3n6Llo$k1RcnhcFXYFCSOHnmNZuwUj9.xwdlSnG2yu.0HzkPQmoqq2jo5TCrnzeniIyG2uG0JZObBGDuvFjdweqDkXeI.
+  username: masterdbuser
+version_created_at: "2018-11-06T03:28:59Z"
+```
 
 
 
