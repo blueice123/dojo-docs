@@ -205,3 +205,92 @@ https://dojo-mz-concourse-
 ## 샘플 파이프라인 배포 확인
 https://dojo-mz-concourse-lb-xxxxxxxx.elb.ap-northeast-1.amazonaws.com 접속 후 
 vars.yml에서 설정한 username 및 password로 로그인 후 확인
+
+## Concourse credhub 테스트
+```
+bbl print-env
+ubuntu@:~/workspace/bbl-1$ eval "$(bbl print-env)" 
+
+bbl lbs
+ubuntu@:~/workspace/bbl-1$ bbl lbs   (bbl up을 실행한 폴더에서 다음 명령을 실행)
+Concourse LB: dojo-mz-env-ur-xxxxx-concourse-lb [dojo-mz-concourse-lb-xxxxxxxx.elb.ap-northeast-1.amazonaws.com]
+
+CONCOURSE_URL 환경 변수 설정
+export CONCOURSE_URL="https://dojo-mz-concourse-lb-xxxxxxxx.elb.ap-northeast-1.amazonaws.com"
+
+CONCOURSE CREDHUB으로 접근 하도록 설정
+ubuntu@:~/workspace/concourse/concourse-credhub$ source ./target-concourse-credhub.sh
+Connecting to Credhub on BOSH Director....
+Warning: The targeted TLS certificate has not been verified for this connection.
+Warning: The --skip-tls-validation flag is deprecated. Please use --ca-cert instead.
+Setting the target url: https://10.0.0.6:8844
+Login Successful
+Reading environment details from Credhub on BOSH Director....
+https://bbl-env-ur-xxxxx-concourse-lb-xxxxx.elb.ap-northeast-1.amazonaws.com:8844
+concourse_to_credhub
+Plv2Q17463aOAnAknfp7wdC2b33GPf
+-----BEGIN CERTIFICATE----- 
+-----END CERTIFICATE-----
+Connecting to Concourse Credhub...
+Warning: The targeted TLS certificate has not been verified for this connection.
+Warning: The --skip-tls-validation flag is deprecated. Please use --ca-cert instead.
+Setting the target url: https://bbl-env-ur-xxxxx-concourse-lb-xxxxxx.elb.ap-northeast-1.amazonaws.com:8844
+Login Successful
+
+
+ubuntu@:~/workspace/concourse/concourse-credhub$ credhub set -t value -n /concourse/main/hello -v test
+id: 637fedec-b6f3-4ff4-aa8b-e15cce9f3353
+name: /concourse/main/hello
+type: value
+value: <redacted>
+version_created_at: "2018-11-13T07:40:29Z"
+
+ubuntu@:~/workspace/concourse/concourse-credhub$ credhub get -n /concourse/main/hello
+id: 637fedec-b6f3-4ff4-aa8b-e15cce9f3353
+name: /concourse/main/hello
+type: value
+value: test
+version_created_at: "2018-11-13T07:40:29Z"
+```
+## Credhub 연동 테스트 
+```
+Credhub 연동 테스트 관련 파이프라인 배포
+fly -t concourse sp -p test-credhub -c test.yml
+
+jobs:
+- name: hello-credhub
+  plan:
+  - do:
+    - task: hello-credhub
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ubuntu
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            echo "Hello $WORLD_PARAM"
+      params:
+        WORLD_PARAM: ((hello)) <- {{hello}} 대신 ((hello))로 변경해야 Credhub에서 값을 읽음
+
+Credhub 파이프라인 실행
+fly -t concourse up -p test-credhub        
+
+Credhub 파이프라인 트리거
+fly -t concourse tj -j test-credhub/hello-credhub -w
+
+Successfully pulled ubuntu@sha256:29934af957c53004d7fb6340139880d23fb1952505a15d69a0                                                                         3af0d1418878cb.
+
+running sh -exc echo "Hello $WORLD_PARAM"
+
++ echo Hello test
+Hello test
+succeeded
+```
+
+
+
