@@ -2,9 +2,10 @@
 https://docs.pivotal.io/pivotalcf/2-3/upgrading/checklist.html#top
 
 1. 버전간 호환성 검사
-2. Ops Manager의 서비스 타일 업그레이드
-3. Ops Manager 업그레이드
-4. PAS 업그레이드
+2. bosh deployment 상태 검사 및 복구 https://bosh.io/docs/cli-v2/#deployment-recovery
+3. Ops Manager의 서비스 타일 업그레이드
+4. Ops Manager 업그레이드
+5. PAS 업그레이드
 
 ## PAS 업그레이드 파이프라인 구성
 1. Ops Manager 업그레이드 파이프라인
