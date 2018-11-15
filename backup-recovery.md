@@ -16,5 +16,37 @@ https://docs.pivotal.io/pivotalcf/2-3/customizing/backup-restore/backup-pcf-bbr.
 https://docs.pivotal.io/pivotalcf/2-3/customizing/backup-restore/backup-pcf-bbr.html#validate-backup
 
 
-## concourse파이프라인을 이용한 자동백업
+### concourse파이프라인을 이용한 자동백업
+https://github.com/pivotal-cf/bbr-pcf-pipeline-tasks
+
+#### 파이프라인 다운로드
+```
+https://github.com/pivotal-cf/bbr-pcf-pipeline-tasks
+git clone https://github.com/pivotal-cf/bbr-pcf-pipeline-tasks.git
+```
+#### params.yml 수정 
+```
+skip-ssl-validation: true
+pivnet-api-token: ((pivnet_token))
+opsman-url: https://opsman.sampivotal.com
+opsman-username: ((opsman_admin.username))
+opsman-password: ((opsman_admin.password))
+opsman-private-key: ((PEM_MEGA.private_key)) # optional, Ops Manager VM SSH private key
+client-id:
+client-secret:
+backup-artifact-bucket: backup-artifact-mega
+storage-region: ap-northeast-1
+storage-endpoint: s3.ap-northeast-1.amazonaws.com
+storage-access-key-id: ((aws_access_key_id))
+storage-secret-access-key: ((aws_secret_access_key))
+concourse-worker-tag: external_worker
+```
+#### 파이프라인 배포
+```
+~/workspace/bbr-pcf-pipeline-tasks$ fly -t concourse sp -p bbr-backup-task -c pipeline.yml -l params.yml
+```
+
+
+
+
 
