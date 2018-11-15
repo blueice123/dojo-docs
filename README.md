@@ -13,6 +13,6 @@
 - monitoring
 - user management
 - [lifecycle policy](lifecycle-policy.md)
-
+- [backup and recovery](backup-recovery.md)
 
  
