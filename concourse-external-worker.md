@@ -84,4 +84,18 @@ bosh -e $BOSH_ENVIRONMENT deploy -d concourse-worker external-worker.yml \
 -v worker_tags=[external_worker] \
 -l secrets.yml
 ```
+### external worker 등록 확인
+```
+fly -t concourse workers
+
+name                                  containers  platform  tags             team  state    version
+17e22bda-1c76-4293-84ed-6f9459e9703a  9           linux     none             none  running  2.1
+34db1fb4-dc7a-4b97-9010-d56a352e811e  2           linux     external_worker  none  running  2.1
+37cfbf68-1303-43c5-a83f-fe0bf4ace65a  1           linux     none             none  running  2.1
+7cc934af-4d35-4d28-9bdf-53561ece8a64  2           linux     none             none  running  2.1
+a1320f76-4463-4277-8129-e51cc04c9c84  3           linux     none             none  running  2.1
+f29892f4-1755-477f-b9b6-242bd8f3a14e  3           linux     none             none  running  2.1e
+```
+
+
 
