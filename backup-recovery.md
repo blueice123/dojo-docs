@@ -45,7 +45,8 @@ concourse-worker-tag: external_worker
 ```
 ~/workspace/bbr-pcf-pipeline-tasks$ fly -t concourse sp -p bbr-backup-task -c pipeline.yml -l params.yml
 ```
-
+#### 주기적 자동 백업
+https://github.com/pivotalservices/concourse-pipeline-samples/tree/master/concourse-pipeline-patterns/time-triggered-pipelines/01-single-time-trigger
 
 
 
