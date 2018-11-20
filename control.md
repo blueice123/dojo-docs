@@ -14,7 +14,8 @@
   - terraform >= 0.11.0 : https://www.terraform.io/downloads.html
   - ruby: ``` sudo apt-get update && sudo apt-get install ruby-full ```
   - uaac : ``` gem install cf-uaac ```
-
+  - install bbl : https://github.com/cloudfoundry/bosh-bootloader/releases
+  
 ## bosh VM 배포하기(bbl up: Bosh Bootloader)
 bbl cli를 이용해서 control plane의 bosh VM을 자동으로 생성할 것입니다. 추가로 생성되는 bbl-jumpbox vm은 bosh vm으로 접근하는 proxy VM이므로 삭제하면 안됩니다.
 
