@@ -13,16 +13,20 @@ ubuntu@~/workspace/ clone https://github.com/concourse/concourse-bosh-deployment
 external_host: "${EXTERNAL_HOST}"
 external_url: "https://${EXTERNAL_HOST}"
 local_user:
-    username: "${USERNAME}"
-    password: "${PASSWORD}"
+    username: "<username>"
+    password: "<password>"
 network_name: 'private'
 web_network_name: 'private'
 web_vm_type: 'default'
 web_network_vm_extension: 'lb'
+web_instances: 1
 db_vm_type: 'default'
 db_persistent_disk_type: '1GB'
 worker_vm_type: 'default'
 deployment_name: 'concourse'
+worker_instances: 1
+worker_ephemeral_disk: '100GB_ephemeral_disk'
+
 ```
 ### aws-tls-vars.yml
 ```
@@ -84,23 +88,26 @@ vm_types:
 ~/workspace/concourse-bosh-deployment/cluster/$ bosh update-cloud-config ./bosh-cloud-config.yml
 ```
 
-### deploy-concourse.sh
+### prepare-for-concourse.sh
 ```
-  bosh deploy -d concourse concourse.yml \
-      -l ../versions.yml \
-      -l vars.yml \
-      -o operations/basic-auth.yml \
-      -o operations/privileged-http.yml \
-      -o operations/privileged-https.yml \
-      -o operations/tls.yml \
-      -o aws-tls-vars.yml \
-      -o operations/web-network-extension.yml \
-      -o operations/add-credhub-uaa-to-web.yml
-```
+export IAAS="$(cat bbl-state.json | jq -r .iaas)"
+if [ "${IAAS}" = "aws" ]; then
+  export EXTERNAL_HOST="$(bbl outputs | grep concourse_lb_url | cut -d ' ' -f2)"
+  export STEMCELL_URL="https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-xenial-go_agent"
+elif [ "${IAAS}" = "gcp" ]; then
+  export EXTERNAL_HOST="$(bbl outputs | grep concourse_lb_ip | cut -d ' ' -f2)"
+  export STEMCELL_URL="https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-xenial-go_agent"
+else # Azure
+  export EXTERNAL_HOST="$(bbl outputs | grep concourse_lb_ip | cut -d ' ' -f2)"
+  export STEMCELL_URL="https://bosh.io/d/stemcells/bosh-azure-hyperv-ubuntu-xenial-go_agent"
+fi
 
-### stemcell upload
+bosh upload-stemcell "${STEMCELL_URL}"
+
 ```
-$ bosh upload-stemcell --sha1 6bb02acbfffe7cd2a57a98125f13bbed9ab4dc48   https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-xenial-go_agent?v=170.2
+# stemcell upload
+```
+$ source prepare-for-concourse.sh
 
 $ bosh stemcells
 Using environment 'https://10.0.0.6:25555' as client 'admin'
@@ -112,9 +119,23 @@ bosh-aws-xen-hvm-ubuntu-xenial-go_agent  170.2    ubuntu-xenial  -    ami-032665
 
 1 stemcells
 Succeeded
+```
+# deploy concourse
+```
+ bosh deploy -d concourse concourse.yml \
+      -l ../versions.yml \
+      -l vars.yml \
+      -o operations/basic-auth.yml \
+      -o operations/privileged-http.yml \
+      -o operations/privileged-https.yml \
+      -o operations/tls.yml \
+      -o aws-tls-vars.yml \
+      -o operations/web-network-extension.yml \
+      -o operations/add-credhub-uaa-to-web.yml \
+      -o operations/worker-ephemeral-disk.yml \
+      -o operations/scale.yml
 
-/workspace/concourse-bosh-deployment/cluster$ ./deploy.sh
-
+/workspace/concourse-bosh-deployment/cluster$ ./deploy-concourse.sh
 
 /workspace/concourse-bosh-deployment/cluster$ bosh vms
 Using environment 'https://10.0.0.6:25555' as client 'admin'
