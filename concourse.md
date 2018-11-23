@@ -88,7 +88,7 @@ vm_types:
 ~/workspace/concourse-bosh-deployment/cluster/$ bosh update-cloud-config ./bosh-cloud-config.yml
 ```
 
-### prepare-for-concourse.sh
+### prepare-for-concourse.sh (bbl 폴더에서 실행해야됨)
 ```
 export IAAS="$(cat bbl-state.json | jq -r .iaas)"
 if [ "${IAAS}" = "aws" ]; then
